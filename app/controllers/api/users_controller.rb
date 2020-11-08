@@ -36,18 +36,21 @@ module Api
     end
 
     def typeahead
+      text = params['name']
       binding.pry
-      @user = User.or(first_name: value)
-                  .or(last: value)
-                  .or(email: value)
+      @user = User.or(first_name: search_regex(text)).or(last_name: search_regex(text)).or(email: search_regex(text))
       if @user.present?
-        render json: { user: @user, message: 'Date successfully updated' }
+        render json: { user: @user }
       else
         render json: { message: 'Not found' }
       end
     end
 
    private
+
+    def search_regex(keyword)
+      BSON::Regexp::Raw.new(keyword, 'i')
+    end
 
     def set_user
       @user = User.find_by(id: params[:id])
