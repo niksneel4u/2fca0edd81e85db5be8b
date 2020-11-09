@@ -37,7 +37,6 @@ module Api
 
     def typeahead
       text = params['name']
-      binding.pry
       @user = User.or(first_name: search_regex(text)).or(last_name: search_regex(text)).or(email: search_regex(text))
       if @user.present?
         render json: { user: @user }
